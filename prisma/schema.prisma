@@ -1,0 +1,143 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model User {
+  id            String       @id @default(cuid())
+  name          String?
+  email         String?      @unique
+  emailVerified DateTime?    @map("email_verified")
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  role          UserRole     @default(STUDENT)
+  enrollment    Enrollment[]
+
+  @@map("users")
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verificationtokens")
+}
+
+enum UserRole {
+  ADMIN
+  TEACHER
+  STUDENT
+}
+
+// Define the Course model
+model Course {
+  id           Int          @id @default(autoincrement())
+  name         String
+  code         String       @unique
+  description  String?
+  department   Department   @relation(fields: [departmentId], references: [id])
+  departmentId Int
+  enrollments  Enrollment[]
+  // Add other course-related fields here (e.g., credit hours, department, etc.)
+  Lecture      Lecture[]
+  Assignment   Assignment[]
+}
+
+// Define the Department model
+model Department {
+  id          Int          @id @default(autoincrement())
+  name        String
+  code        String       @unique
+  instructors Instructor[]
+  courses     Course[]
+  // Add other department-related fields here (e.g., head of department, etc.)
+}
+
+// Define the Instructor model
+model Instructor {
+  id           Int        @id @default(autoincrement())
+  firstName    String
+  lastName     String
+  email        String     @unique
+  department   Department @relation(fields: [departmentId], references: [id])
+  departmentId Int
+  // Add other instructor-related fields here (e.g., office hours, etc.)
+  Lecture      Lecture[]
+}
+
+// Define the Enrollment model
+model Enrollment {
+  id        Int    @id @default(autoincrement())
+  student   User   @relation(fields: [studentId], references: [id])
+  studentId String
+  course    Course @relation(fields: [courseId], references: [id])
+  courseId  Int
+  // Add other enrollment-related fields here (e.g., semester, year, grade, etc.)
+}
+
+// Define the Lecture model
+model Lecture {
+  id           Int        @id @default(autoincrement())
+  course       Course     @relation(fields: [courseId], references: [id])
+  courseId     Int
+  instructor   Instructor @relation(fields: [instructorId], references: [id])
+  instructorId Int
+  startTime    DateTime
+  endTime      DateTime
+  location     String
+  // Add other lecture-related fields here (e.g., lecture type, etc.)
+}
+
+// Define the Assignment model
+model Assignment {
+  id          Int      @id @default(autoincrement())
+  course      Course   @relation(fields: [courseId], references: [id])
+  courseId    Int
+  title       String
+  description String?
+  dueDate     DateTime
+  // Add other assignment-related fields here (e.g., maximum score, etc.)
+}
