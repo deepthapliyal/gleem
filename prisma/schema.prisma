@@ -9,7 +9,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -44,15 +44,15 @@ model Session {
 }
 
 model User {
-  id            String       @id @default(cuid())
+  id            String    @id @default(cuid())
   name          String?
-  email         String?      @unique
-  emailVerified DateTime?    @map("email_verified")
+  email         String?   @unique
+  emailVerified DateTime? @map("email_verified")
   image         String?
   accounts      Account[]
   sessions      Session[]
-  role          UserRole     @default(STUDENT)
-  enrollment    Enrollment[]
+  cart          Cart?
+  Order         Order[]
 
   @@map("users")
 }
@@ -66,78 +66,66 @@ model VerificationToken {
   @@map("verificationtokens")
 }
 
-enum UserRole {
-  ADMIN
-  TEACHER
-  STUDENT
-}
-
-// Define the Course model
-model Course {
-  id           Int          @id @default(autoincrement())
-  name         String
-  code         String       @unique
-  description  String?
-  department   Department   @relation(fields: [departmentId], references: [id])
-  departmentId Int
-  enrollments  Enrollment[]
-  // Add other course-related fields here (e.g., credit hours, department, etc.)
-  Lecture      Lecture[]
-  Assignment   Assignment[]
-}
-
-// Define the Department model
-model Department {
-  id          Int          @id @default(autoincrement())
-  name        String
-  code        String       @unique
-  instructors Instructor[]
-  courses     Course[]
-  // Add other department-related fields here (e.g., head of department, etc.)
-}
-
-// Define the Instructor model
-model Instructor {
-  id           Int        @id @default(autoincrement())
-  firstName    String
-  lastName     String
-  email        String     @unique
-  department   Department @relation(fields: [departmentId], references: [id])
-  departmentId Int
-  // Add other instructor-related fields here (e.g., office hours, etc.)
-  Lecture      Lecture[]
-}
-
-// Define the Enrollment model
-model Enrollment {
-  id        Int    @id @default(autoincrement())
-  student   User   @relation(fields: [studentId], references: [id])
-  studentId String
-  course    Course @relation(fields: [courseId], references: [id])
-  courseId  Int
-  // Add other enrollment-related fields here (e.g., semester, year, grade, etc.)
-}
-
-// Define the Lecture model
-model Lecture {
-  id           Int        @id @default(autoincrement())
-  course       Course     @relation(fields: [courseId], references: [id])
-  courseId     Int
-  instructor   Instructor @relation(fields: [instructorId], references: [id])
-  instructorId Int
-  startTime    DateTime
-  endTime      DateTime
-  location     String
-  // Add other lecture-related fields here (e.g., lecture type, etc.)
-}
-
-// Define the Assignment model
-model Assignment {
-  id          Int      @id @default(autoincrement())
-  course      Course   @relation(fields: [courseId], references: [id])
-  courseId    Int
+model Product {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   title       String
-  description String?
-  dueDate     DateTime
-  // Add other assignment-related fields here (e.g., maximum score, etc.)
+  image       String
+  category    String
+  description String   
+  price       Float
+  ItemOf      CartItem? @relation(fields: [cartItemId], references: [id])
+  cartItemId  String? @unique
+  orderItemOf Order? @relation(fields: [orderItemId], references: [id])
+  orderItemId String? @unique
+
+  @@map("products")
 }
+
+model Cart {
+  id        String     @id @default(cuid())
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  cartItems CartItem[]
+  userId    String     @unique
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("carts")
+}
+
+model CartItem {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  product   Product?
+  quantity  Int
+  cartId    String?
+  cart      Cart?    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId String?
+
+  @@map("cart_items")
+}
+
+model Order {
+  id         String      @id @default(cuid())
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  status     Status
+  totalPrice Float
+  userId     String
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quantity  Int
+  product   Product[]
+  payCompleted Boolean @default(false)
+
+  @@map("orders")
+}
+
+enum Status {
+  PENDING
+  CANCELED
+  COMPLETED
+}
+
+

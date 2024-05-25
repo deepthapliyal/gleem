@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import AuthButtonClient from "@/app/AuthButton.client";
 import { SessionProvider } from "next-auth/react";
 import { BASE_PATH, auth } from "@/auth";
-import { School } from "lucide-react";
+import { School, ShoppingCart } from "lucide-react";
 
 export default async function Navbar() {
     const session = await auth();
@@ -23,22 +23,26 @@ export default async function Navbar() {
             {/* <Link className="font-medium flex items-center text-sm transition-colors hover:underline" href="/about">
               About
             </Link> */}
-            <Link className="font-medium flex items-center text-sm transition-colors hover:underline" href="/students">
-              Students
+            <Link className="font-medium flex items-center text-sm transition-colors hover:underline" href="/category">
+              Categories
             </Link>
-            <Link className="font-medium flex items-center text-sm transition-colors hover:underline" href="#">
+            <Link  className="font-medium flex items-center text-sm transition-colors hover:underline" href="mailto:deepakthapliyal47@gmail.com">
               Contact
             </Link>
           </nav>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-6">
             {/* <Button size="sm" variant="outline">
               Sign in
             </Button>
             <Button size="sm">Sign up</Button> */}
+            <Link href={'/cart'}>
+            <ShoppingCart/>
+            </Link>
             <SessionProvider basePath={BASE_PATH} session={session}>
             <AuthButtonClient/>
             </SessionProvider>
           </div>
+          
         </div>
       </div>
     </nav>
