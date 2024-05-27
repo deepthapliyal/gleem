@@ -16,7 +16,7 @@ const Page = async () => {
                 <> <h1 className="text-3xl">No order founds</h1></>
                 :
                 orders.map((item, index) => (
-                    <div key={index} className="flex border p-2 justify-between w-full">
+                    <div key={index} className="flex flex-col gap-4 items-center lg:flex-row border p-2 justify-between w-full">
                         <div className="flex items-center gap-4">
                             <img className="w-20 rounded-lg" src={item.product[0]?.image} alt="" />
                             <h1 className="text-xl">{item.product[0]?.title}</h1>

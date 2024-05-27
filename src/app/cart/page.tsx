@@ -26,15 +26,15 @@ const Page = async () => {
         return <div></div>
     }
     return (
-        <div className="flex flex-col text-2xl items-center p-4 gap-6 h-[80vh]" >
+        <div className="flex flex-col text-2xl items-center p-4 gap-6 h-[80vh] overscroll-auto" >
             {cart?.cartItems.length != 0 ?
                 cart['cartItems'].map((item, index) => (
-                    <div key={index} className="flex border p-2 justify-between w-full">
+                    <div key={index} className="flex flex-col gap-6 lg:flex-row border p-2 justify-between w-full">
                         <div className="flex items-center gap-4">
                             <img className="w-20 rounded-lg" src={item.product?.image} alt="" />
                             <h1 className="text-xl">{item.product?.title}</h1>
                         </div>
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-4 flex-col">
 
                             <CartItemOptions item={item} />
                         </div>

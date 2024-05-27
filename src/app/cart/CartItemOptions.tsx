@@ -49,13 +49,16 @@ const CartItemOptions = ({ item }: ItemProps) => {
 
     return (
         <>
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-2 items-center ">
                 <Button onClick={() => setQuantity((prev) => Math.max(1, prev -= 1))}>-</Button>
                 <p>quantity : {quantity} </p>
                 <Button onClick={() => setQuantity(prev => prev += 1)}>+</Button>
             </div>
+            <div className="flex flex-row gap-2 ">
+
             <Button onClick={removeItem} className="bg-red-500 hover:bg-red-600">Remove item</Button>
             <Button onClick={addToOrder} className="bg-green-500 hover:bg-green-600">Place Order</Button>
+            </div>
 
         </>
 

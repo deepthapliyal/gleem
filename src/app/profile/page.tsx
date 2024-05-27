@@ -37,10 +37,10 @@ export default function Page() {
             <div className="gap-3 flex flex-row">
                 <Button variant={"destructive"} onClick={handleSignOut}>Log out</Button>
                 <Link href={'/cart'}>
-                <Button className="bg-green-500 hover:bg-green-600" onClick={handleSignOut}>My Cart</Button>
+                <Button className="bg-green-500 hover:bg-green-600">My Cart</Button>
                 </Link>
                 <Link href={'/orders'}>
-                <Button variant={"secondary"} onClick={handleSignOut}>My Orders</Button>
+                <Button variant={"secondary"}>My Orders</Button>
                 </Link>
             </div>
         </div>
