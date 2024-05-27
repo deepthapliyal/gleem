@@ -14,7 +14,7 @@ export default function Page() {
     const session = useSession();
     const handleSignOut = async () => {
         await signOut();
-        router.refresh;
+        location.reload()
 
     }
     if (session.status === "unauthenticated") {

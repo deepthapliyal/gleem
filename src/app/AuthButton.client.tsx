@@ -6,9 +6,13 @@ import { Button } from "@/components/ui/button";
 
 import { signIn } from "@/auth/helpers";
 import UserAvatar  from "@/components/avatar";
+import Link from "next/link";
 
 export default function AuthButton() {
   const session = useSession();
+  const makeSignIn = ()=>{
+    location.replace('/api/auth/signin')
+  }
 
   return session?.data?.user ? (
 
@@ -16,7 +20,7 @@ export default function AuthButton() {
     
   ) : (
     <>
-    <Button onClick={async () => await signIn()}>Sign In</Button>
+    <Button onClick={makeSignIn}>Sign In</Button>
     </>
 
   );
