@@ -4,9 +4,7 @@ import { useSession } from "next-auth/react";
 
 import { Button } from "@/components/ui/button";
 
-import { signIn } from "@/auth/helpers";
 import UserAvatar  from "@/components/avatar";
-import Link from "next/link";
 
 export default function AuthButton() {
   const session = useSession();
